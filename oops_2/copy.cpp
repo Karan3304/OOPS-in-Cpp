@@ -33,9 +33,9 @@ public:
 
     // copy const
     customer(customer &B){
-        name = B.name;
-        acc_no = B.acc_no;
-        balance = B.balance;
+        this->name = B.name;
+        this->acc_no = B.acc_no;
+        this->balance = B.balance;
     }
 
     void display()

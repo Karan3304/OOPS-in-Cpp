@@ -15,8 +15,7 @@ class customer{
     }
     
     //inline constructor
-    inline customer(string a,int b,int c): name(a),acc_no(b),balance(c){
-    }
+    inline customer(string a,int b,int c): name(a),acc_no(b),balance(c){}
 
     // constructor overloading
     customer(string a,int b){
