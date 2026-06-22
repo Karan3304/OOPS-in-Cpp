@@ -24,7 +24,6 @@ public:
         cout << "name: " << name << endl;
         cout << "age: " << age << endl;
     }
-
 };
 
 class student : public human
@@ -48,7 +47,6 @@ public:
         cout << "roll_no: " << roll_no << endl;
         cout << "fees: " << fees << endl;
     }
-
 };
 
 int main()
