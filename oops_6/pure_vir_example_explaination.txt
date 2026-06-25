@@ -1,0 +1,652 @@
+# Pure Virtual Function, Runtime Polymorphism, Abstract Class & Virtual Destructor
+
+## Detailed Hinglish Notes with Payment Processing Example
+
+---
+
+# Introduction
+
+Ye example ek saath C++ ke 4 important OOP concepts explain karta hai:
+
+1. Pure Virtual Function
+2. Abstract Class
+3. Runtime Polymorphism
+4. Virtual Destructor
+
+Example:
+
+```cpp
+class PaymentMethod {
+public:
+    virtual void processPayment(double amount) = 0;
+
+    virtual ~PaymentMethod() {}
+};
+```
+
+---
+
+# Step 1: Program Start Hota Hai
+
+```cpp
+int main()
+{
+```
+
+Jab `main()` start hota hai, hume 3 alag payment methods create karni hain:
+
+* Credit Card
+* UPI
+* Net Banking
+
+Lekin hum direct derived class ke pointers nahi bana rahe.
+
+Hum base class pointer use kar rahe hain.
+
+---
+
+# Step 2: First Object Creation
+
+```cpp
+PaymentMethod* p1 = new CreditCard();
+```
+
+## Memory Allocation
+
+Heap me ek `CreditCard` object create hota hai.
+
+```text
+Heap
+----------------
+CreditCard Object
+----------------
+```
+
+Us object ka address `p1` me store hota hai.
+
+### Pointer Type
+
+```cpp
+PaymentMethod*
+```
+
+### Actual Object Type
+
+```cpp
+CreditCard
+```
+
+Ye allowed hai because:
+
+```cpp
+CreditCard IS-A PaymentMethod
+```
+
+Inheritance relation exist karta hai.
+
+### Memory Layout
+
+```text
+Stack                          Heap
+-----                          ----------------
+p1 ------------------------->  CreditCard Object
+```
+
+---
+
+# Step 3: Second Object Creation
+
+```cpp
+PaymentMethod* p2 = new UPI();
+```
+
+### Memory Layout
+
+```text
+Stack                          Heap
+-----                          ----------------
+
+p1 ------------------------->  CreditCard Object
+
+p2 ------------------------->  UPI Object
+```
+
+---
+
+# Step 4: Third Object Creation
+
+```cpp
+PaymentMethod* p3 = new NetBanking();
+```
+
+### Memory Layout
+
+```text
+Stack                          Heap
+-----                          ----------------
+
+p1 ------------------------->  CreditCard Object
+
+p2 ------------------------->  UPI Object
+
+p3 ------------------------->  NetBanking Object
+```
+
+---
+
+# Step 5: First Function Call
+
+```cpp
+p1->processPayment(5000);
+```
+
+Compiler dekhta hai ki:
+
+```cpp
+p1
+```
+
+ka type hai:
+
+```cpp
+PaymentMethod*
+```
+
+Normally compiler base class function call karta.
+
+Lekin function virtual hai:
+
+```cpp
+virtual void processPayment(double amount) = 0;
+```
+
+Isliye final decision runtime par hota hai.
+
+---
+
+# Runtime Pe Kya Hota Hai?
+
+Program check karta hai:
+
+```text
+p1 -----> CreditCard Object
+```
+
+Actual object:
+
+```cpp
+CreditCard
+```
+
+To call hoga:
+
+```cpp
+CreditCard::processPayment()
+```
+
+### Output
+
+```text
+Processing Credit Card payment of Rs. 5000
+```
+
+---
+
+# Step 6: Second Function Call
+
+```cpp
+p2->processPayment(2500);
+```
+
+Runtime:
+
+```text
+p2 -----> UPI Object
+```
+
+Execute:
+
+```cpp
+UPI::processPayment()
+```
+
+### Output
+
+```text
+Processing UPI payment of Rs. 2500
+```
+
+---
+
+# Step 7: Third Function Call
+
+```cpp
+p3->processPayment(10000);
+```
+
+Runtime:
+
+```text
+p3 -----> NetBanking Object
+```
+
+Execute:
+
+```cpp
+NetBanking::processPayment()
+```
+
+### Output
+
+```text
+Processing Net Banking payment of Rs. 10000
+```
+
+---
+
+# Pure Virtual Function Ka Role
+
+Base class:
+
+```cpp
+class PaymentMethod {
+public:
+    virtual void processPayment(double amount) = 0;
+};
+```
+
+Yaha:
+
+```cpp
+= 0
+```
+
+ka matlab hai:
+
+> "Main sirf contract define kar raha hoon. Implementation mujhe nahi pata."
+
+Har derived class ko implementation deni hi padegi.
+
+---
+
+# Abstract Class
+
+Jis class me kam se kam ek pure virtual function ho:
+
+```cpp
+virtual void processPayment() = 0;
+```
+
+Wo class **Abstract Class** ban jaati hai.
+
+Example:
+
+```cpp
+PaymentMethod p;
+```
+
+❌ Error
+
+Abstract class ka object create nahi kar sakte.
+
+---
+
+# Agar Override Na Kare To?
+
+```cpp
+class UPI : public PaymentMethod
+{
+};
+```
+
+UPI ne `processPayment()` implement nahi kiya.
+
+To `UPI` bhi abstract class ban jayegi.
+
+```cpp
+UPI obj;
+```
+
+❌ Error
+
+Object create nahi kar sakte.
+
+---
+
+# Base Class Implementation Kyu Nahi Deti?
+
+Payment process karne ka logic har method ka alag hota hai:
+
+* Credit Card
+* UPI
+* Net Banking
+
+Sabka algorithm different hai.
+
+Isliye base class sirf contract define karti hai:
+
+```cpp
+processPayment()
+```
+
+Implementation derived classes deti hain.
+
+---
+
+# Runtime Polymorphism
+
+Same pointer:
+
+```cpp
+PaymentMethod*
+```
+
+Different objects:
+
+```cpp
+CreditCard
+UPI
+NetBanking
+```
+
+Aur runtime par correct function call hota hai.
+
+Isi ko **Runtime Polymorphism** kehte hain.
+
+---
+
+# Destructor Kya Hota Hai?
+
+Constructor object create hone par chalta hai.
+
+Destructor object destroy hone par chalta hai.
+
+Example:
+
+```cpp
+class Test {
+public:
+    Test() {
+        cout << "Constructor\n";
+    }
+
+    ~Test() {
+        cout << "Destructor\n";
+    }
+};
+```
+
+### Output
+
+```text
+Constructor
+Destructor
+```
+
+---
+
+# Hamare Example Mein
+
+Object heap me create hua:
+
+```cpp
+PaymentMethod* p1 = new CreditCard();
+```
+
+Isliye manually delete karna padega:
+
+```cpp
+delete p1;
+```
+
+---
+
+# Problem Without Virtual Destructor
+
+Suppose:
+
+```cpp
+class PaymentMethod {
+public:
+    ~PaymentMethod() {
+        cout << "PaymentMethod Destructor\n";
+    }
+};
+```
+
+Aur:
+
+```cpp
+class CreditCard : public PaymentMethod {
+public:
+    ~CreditCard() {
+        cout << "CreditCard Destructor\n";
+    }
+};
+```
+
+Main:
+
+```cpp
+PaymentMethod* p = new CreditCard();
+
+delete p;
+```
+
+### Output
+
+```text
+PaymentMethod Destructor
+```
+
+Sirf base destructor chala.
+
+Derived destructor nahi chala.
+
+---
+
+# Ye Dangerous Kyu Hai?
+
+Suppose:
+
+```cpp
+class CreditCard : public PaymentMethod {
+
+    int* data;
+
+public:
+
+    CreditCard() {
+        data = new int[100];
+    }
+
+    ~CreditCard() {
+        delete[] data;
+    }
+};
+```
+
+Agar:
+
+```cpp
+delete p;
+```
+
+Aur destructor virtual nahi hai,
+
+To:
+
+```cpp
+delete[] data;
+```
+
+kabhi execute nahi hoga.
+
+Result:
+
+❌ Memory Leak
+
+---
+
+# Virtual Destructor Solution
+
+```cpp
+class PaymentMethod {
+public:
+    virtual ~PaymentMethod() {
+        cout << "PaymentMethod Destructor\n";
+    }
+};
+```
+
+Ab:
+
+```cpp
+PaymentMethod* p = new CreditCard();
+
+delete p;
+```
+
+### Output
+
+```text
+CreditCard Destructor
+PaymentMethod Destructor
+```
+
+### Execution Flow
+
+```text
+delete p
+    |
+    v
+CreditCard Destructor
+    |
+    v
+PaymentMethod Destructor
+```
+
+---
+
+# Hamare Example Mein
+
+```cpp
+virtual ~PaymentMethod() {}
+```
+
+Meaning:
+
+> Agar base class pointer se derived object delete kiya jaye, to actual derived class destructor pehle call hona chahiye.
+
+---
+
+# Real Industry Analogy
+
+Maan lo ek fintech company me 50 payment methods hain:
+
+```text
+CreditCard
+UPI
+PayPal
+Stripe
+Razorpay
+NetBanking
+Wallet
+```
+
+Company ek common interface banati hai:
+
+```cpp
+class PaymentMethod {
+public:
+    virtual void processPayment() = 0;
+};
+```
+
+Ab jo bhi naya payment provider aayega usko sirf:
+
+```cpp
+processPayment()
+```
+
+implement karna padega.
+
+Framework automatically usko use kar lega.
+
+Isi flexibility ke liye pure virtual functions use kiye jaate hain.
+
+---
+
+# Interview Definitions
+
+## Pure Virtual Function
+
+A function declared with `= 0` that forces derived classes to implement it.
+
+```cpp
+virtual void processPayment() = 0;
+```
+
+---
+
+## Abstract Class
+
+A class containing at least one pure virtual function.
+
+Objects cannot be created directly.
+
+---
+
+## Runtime Polymorphism
+
+Base class pointer calling derived class function at runtime through virtual functions.
+
+---
+
+## Virtual Destructor
+
+Ensures that when a base class pointer deletes a derived object, the derived destructor executes first.
+
+---
+
+# Golden Rule
+
+Whenever a class contains:
+
+```cpp
+virtual function
+```
+
+or
+
+```cpp
+pure virtual function
+```
+
+always prefer:
+
+```cpp
+virtual ~ClassName() {}
+```
+
+This is standard industry practice.
+
+---
+
+# One-Line Summary
+
+### Pure Virtual Function
+
+**Contract**
+
+### Abstract Class
+
+**Incomplete Blueprint**
+
+### Runtime Polymorphism
+
+**Runtime Decision Making**
+
+### Virtual Destructor
+
+**Safe Cleanup of Derived Objects**
