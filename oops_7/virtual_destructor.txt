@@ -1,0 +1,118 @@
+Role of Virtual Destructor in C++
+
+What is a Destructor?
+
+A destructor is a special member function that is automatically called
+when an object is destroyed. It is mainly used to release resources such
+as dynamically allocated memory, files, sockets, etc.
+
+Why is the Destructor in the Exception Class Virtual?
+
+    virtual ~Exception() {}
+
+The destructor is declared as virtual so that if a derived class object
+is deleted through a base class pointer, the correct destructor sequence
+is executed.
+
+Example:
+
+    Exception* e = new BadAlloc();
+    delete e;
+
+Here, the pointer type is Exception*, but the actual object is BadAlloc.
+
+Without a Virtual Destructor
+
+If the destructor is not virtual:
+
+-   Only the Exception destructor is called.
+-   The BadAlloc destructor is skipped.
+-   Any resources owned by BadAlloc are not released.
+-   This can cause memory leaks and undefined behavior.
+
+With a Virtual Destructor
+
+If the destructor is virtual:
+
+1.  The BadAlloc destructor is called first.
+2.  Then the Exception destructor is called.
+
+This ensures proper cleanup of all resources.
+
+Does It Matter in the Current Program?
+
+In the current program:
+
+    throw BadAlloc();
+
+The exception object is created temporarily and caught by reference:
+
+    catch (Exception& e)
+
+No delete operation is performed, so the object is destroyed
+automatically.
+
+Therefore, the virtual destructor is not required for this specific
+example, but it is still considered good design.
+
+Why Is It Still Important?
+
+The Exception class is intended to be used as a polymorphic base class
+because it contains a virtual function:
+
+    virtual const char* what() = 0;
+
+A well-known C++ best practice is:
+
+If a class has at least one virtual function, its destructor should also
+be virtual.
+
+This ensures that future code remains safe even if objects are created
+dynamically and deleted through base class pointers.
+
+Real-World Example
+
+Suppose BadAlloc owns dynamically allocated memory:
+
+    class BadAlloc : public Exception
+    {
+        int* data;
+
+    public:
+        BadAlloc()
+        {
+            data = new int[100];
+        }
+
+        ~BadAlloc()
+        {
+            delete[] data;
+        }
+    };
+
+Now,
+
+    Exception* e = new BadAlloc();
+    delete e;
+
+Without a virtual destructor, BadAlloc’s destructor would never execute,
+causing a memory leak.
+
+With a virtual destructor, both destructors execute correctly.
+
+Interview Definition
+
+Virtual Destructor:
+
+A virtual destructor ensures that when a derived class object is deleted
+through a base class pointer, the derived class destructor is called
+first, followed by the base class destructor. This guarantees proper
+resource cleanup and prevents memory leaks. Therefore, any class
+intended to be used polymorphically should have a virtual destructor.
+
+Easy Rule to Remember
+
+Virtual Function => Virtual Destructor
+
+If a base class contains even one virtual function, its destructor
+should almost always be declared virtual.
