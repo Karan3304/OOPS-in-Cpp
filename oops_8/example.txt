@@ -1,0 +1,280 @@
+
+
+# Function 1 : addCustomer()
+
+```
+void addCustomer()
+```
+
+Purpose:
+Stores customer details inside customer.txt.
+
+## Opening the File
+
+```
+ofstream file("customer.txt", ios::app);
+```
+
+- ofstream = Output File Stream.
+- "customer.txt" is the file name.
+- ios::app opens the file in append mode, so old records are not deleted.
+
+Example:
+
+Before:
+Rahul 1001 5000
+
+After:
+Rahul 1001 5000
+Amit 1002 7000
+
+## Checking the File
+
+```
+if (!file)
+```
+
+Checks whether the file opened successfully.
+
+If not:
+
+```
+cout << "Error opening file!";
+return;
+```
+
+The function stops immediately.
+
+## Variables
+
+```
+string name;
+int accountNumber;
+double balance;
+```
+
+These temporarily store customer information.
+
+## Taking Input
+
+```
+cout << "Enter Customer Name: ";
+cin >> name;
+
+cin >> accountNumber;
+cin >> balance;
+```
+
+Example:
+
+Rahul
+1001
+5000
+
+## Writing into the File
+
+```
+file << name << " "
+     << accountNumber << " "
+     << balance << endl;
+```
+
+Writes:
+
+Rahul 1001 5000
+
+endl moves to the next line.
+
+## Closing the File
+
+```
+file.close();
+```
+
+Closes the file, saves pending data and releases resources.
+
+## Success Message
+
+```
+cout << "Customer added successfully!";
+```
+
+Displays a confirmation message.
+
+---
+
+# Function 2 : displayCustomers()
+
+```
+void displayCustomers()
+```
+
+Purpose:
+Reads all customer records from customer.txt and displays them.
+
+## Opening the File
+
+```
+ifstream file("customer.txt");
+```
+
+ifstream = Input File Stream (Read Mode).
+
+## Checking the File
+
+```
+if (!file)
+```
+
+If opening fails:
+
+```
+File does not exist or cannot be opened!
+return;
+```
+
+## Variables
+
+```
+string name;
+int accountNumber;
+double balance;
+```
+
+Store values read from the file.
+
+## Reading Data
+
+```
+while(file >> name >> accountNumber >> balance)
+```
+
+Reads one record at a time until the end of the file.
+
+Example file:
+
+Rahul 1001 5000
+Amit 1002 7000
+Priya 1003 9000
+
+Each iteration loads one complete record.
+
+## Printing Records
+
+```
+cout << "Customer Name : " << name << endl;
+cout << "Account No. : " << accountNumber << endl;
+cout << "Balance : " << balance << endl;
+```
+
+Displays every customer's information.
+
+## Closing the File
+
+```
+file.close();
+```
+
+Closes the file after reading.
+
+---
+
+# main()
+
+```
+int main()
+```
+
+Program execution starts here.
+
+## Menu
+
+```
+cout << "1. Add Customer";
+cout << "2. Display Customers";
+cout << "3. Exit";
+```
+
+Shows the menu.
+
+## User Choice
+
+```
+cin >> choice;
+```
+
+Stores the user's selection.
+
+## switch(choice)
+
+Case 1:
+
+```
+addCustomer();
+```
+
+Adds a customer.
+
+Case 2:
+
+```
+displayCustomers();
+```
+
+Displays customers.
+
+Case 3:
+
+```
+cout << "Thank you!";
+```
+
+Exits the program.
+
+Default:
+
+Displays "Invalid Choice!".
+
+## do-while Loop
+
+```
+do
+{
+    ...
+}
+while(choice != 3);
+```
+
+Repeats the menu until the user selects Exit.
+
+---
+
+# Important File Handling Concepts
+
+ofstream -> Write to a file.
+ifstream -> Read from a file.
+ios::app -> Append new records without deleting old ones.
+file.close() -> Close the file after use.
+while(file >> data) -> Safest way to read records until EOF.
+
+---
+
+# Program Flow
+
+Program Starts
+    |
+    v
+Display Menu
+    |
+    v
+User Chooses Option
+    |
+    +--> Add Customer ----> Write to File
+    |
+    +--> Display Customers -> Read from File
+    |
+    v
+Show Menu Again
+    |
+    v
+Exit (Choice = 3)
